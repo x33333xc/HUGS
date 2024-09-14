@@ -34,12 +34,13 @@ def cat_bgfg(bg, fg, only_dynamic=False, only_xyz=False):
     
     output = []
     for fg_feat, bg_feat in zip(fg, bg_feats):
-        if fg_feat is None:
-            output.append(bg_feat)
-        elif only_dynamic:
-            output.append(fg_feat)
-        else:
-            output.append(torch.cat((bg_feat, fg_feat), dim=0))
+        output.append(bg_feat)
+        # if fg_feat is None:
+        #     output.append(bg_feat)
+        # elif only_dynamic:
+        #     output.append(fg_feat)
+        # else:
+        #     output.append(torch.cat((bg_feat, fg_feat), dim=0))
     
     return output
 
@@ -125,8 +126,9 @@ def render(viewpoint_camera, prev_viewpoint_camera, pc : GaussianModel, dynamic_
                 prev_all_fg = cat_all_fg(prev_all_fg, [prev_w_dxyz])
             else:
                 prev_all_fg = cat_all_fg(prev_all_fg, [w_dxyz])
-            
+    # print(f"in renderer gaussian._xyz:{pc._xyz.shape}")        
     xyz, opacity, scales, rotations, shs, feats3D = cat_bgfg(pc, all_fg)
+    # print(f"cat_bgfg xyz:{xyz.shape}")
     if render_optical and prev_viewpoint_camera is not None:
         prev_xyz = cat_bgfg(pc, prev_all_fg, only_xyz=True)[0]
         uv = proj_uv(xyz, viewpoint_camera)
@@ -135,9 +137,10 @@ def render(viewpoint_camera, prev_viewpoint_camera, pc : GaussianModel, dynamic_
         delta_uv = torch.cat([delta_uv, torch.ones_like(delta_uv[:, :1], device=delta_uv.device)], dim=-1)
     else:
         delta_uv = torch.zeros_like(xyz)
-
+    # print(f"delta_uv:{delta_uv.shape}")
     # Create zero tensor. We will use it to make pytorch return gradients of the 2D (screen-space) means
     screenspace_points = torch.zeros_like(xyz, dtype=xyz.dtype, requires_grad=True, device="cuda") + 0
+    # print(f"screenspace_points{screenspace_points.shape}")
     try:
         screenspace_points.retain_grad()
     except:
