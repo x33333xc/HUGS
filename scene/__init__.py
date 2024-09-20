@@ -56,6 +56,7 @@ class Scene:
             print("Found meta_data.json file, assuming Studio data set!")
             scene_info = sceneLoadTypeCallbacks['Studio'](args.source_path, args.white_background, args.eval, data_type, ignore_dynamic)
         else:
+            print(args.source_path)
             assert False, "Could not recognize scene type!"
 
         self.dynamic_verts = scene_info.verts
@@ -106,6 +107,7 @@ class Scene:
                 unicycle_pkg['model'].restore(model_params)
         else:
             self.gaussians.create_from_pcd(scene_info.point_cloud, self.cameras_extent)
+            print(f"after gaussian init , gaussians.max_radii2D:{gaussians.max_radii2D.shape}")
             for track_id in self.dynamic_gaussians.keys():
                 vertices = scene_info.verts[track_id]
 

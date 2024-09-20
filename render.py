@@ -149,7 +149,7 @@ if __name__ == "__main__":
     pipeline = PipelineParams(parser)
     parser.add_argument("--iteration", default=-1, type=int)
     parser.add_argument("--data_type", default='kitti360', type=str)
-    parser.add_argument("--affine", action="store_true")
+    parser.add_argument("--affine", action="store_false")
     parser.add_argument("--ignore_dynamic", action="store_true")
     parser.add_argument("--skip_train", action="store_true")
     parser.add_argument("--skip_test", action="store_true")
